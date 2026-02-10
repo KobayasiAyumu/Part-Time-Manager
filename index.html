@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part-Time Manager - 103万の壁</title>
+    <style>
+        :root {
+            --primary: #FF9800;
+            --danger: #F44336;
+            --safe: #4CAF50;
+            --bg: #f5f5f5;
+        }
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ダッシュボード（上部） */
+        .dashboard {
+            background: white;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+        }
+        .stat-card {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        .stat-title { font-size: 12px; color: #777; margin-bottom: 5px; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #333; }
+        .stat-value span { font-size: 14px; font-weight: normal; color: #777; }
+
+        /* 103万の壁メーター */
+        .wall-container {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .wall-bar-bg {
+            height: 20px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .wall-bar-fill {
+            height: 100%;
+            background: var(--safe);
+            width: 0%;
+            transition: width 0.5s, background 0.3s;
+        }
+        .wall-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #777;
+            margin-top: 5px;
+        }
+        .alert-msg {
+            color: var(--danger);
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            height: 18px;
+            margin-top: 5px;
+        }
+
+        /* カレンダーエリア */
+        .calendar-container {
+            background: white;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #fafafa;
+            border-bottom: 1px solid #eee;
+        }
+        .calendar-header h2 { margin: 0; font-size: 18px; }
+        .btn-month {
+            border: none; background: white; border: 1px solid #ddd;
+            padding: 5px 15px; border-radius: 20px; cursor: pointer;
+        }
+        .btn-month:hover { background: #eee; }
+
+        /* カレンダーグリッド */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+        .weekday {
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #777;
+            padding: 10px 0;
+            background: #fdfdfd;
+            border-bottom: 1px solid #eee;
+        }
+        .day-cell {
+            min-height: 80px;
+            border-right: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 5px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.1s;
+        }
+        .day-cell:hover { background: #fafafa; }
+        .day-number { font-size: 12px; color: #444; }
+        .today { background-color: #e3f2fd; }
+        
+        /* シフトバッジ */
+        .shift-badge {
+            margin-top: 5px;
+            background: #fff3e0;
+            border-left: 3px solid var(--primary);
+            color: #e65100;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        /* モーダル */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none;
+            justify-content: center; align-items: center; z-index: 100;
+        }
+        .modal {
+            background: white; padding: 25px; border-radius: 12px;
+            width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #666; }
+        .form-group input {
+            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 16px;
+        }
+        .modal-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn-save { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+        .btn-del { background: var(--danger); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+        <div class="stat-card">
+            <div class="stat-title">今月の給料</div>
+            <div class="stat-value" id="month-salary">0<span>円</span></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">今年の累計</div>
+            <div class="stat-value" id="year-salary">0<span>円</span></div>
+        </div>
+        
+        <div class="wall-container">
+            <div class="wall-label">
+                <span>扶養内 (0円)</span>
+                <span>壁 (103万円)</span>
+            </div>
+            <div class="wall-bar-bg">
+                <div class="wall-bar-fill" id="wall-bar"></div>
+            </div>
+            <div class="alert-msg" id="wall-alert"></div>
+        </div>
+    </div>
+
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button class="btn-month" onclick="changeMonth(-1)">◀</button>
+            <h2 id="calendar-title">2026年 2月</h2>
+            <button class="btn-month" onclick="changeMonth(1)">▶</button>
+        </div>
+        
+        <div class="calendar-grid">
+            <div class="weekday" style="color:#f44336">日</div>
+            <div class="weekday">月</div>
+            <div class="weekday">火</div>
+            <div class="weekday">水</div>
+            <div class="weekday">木</div>
+            <div class="weekday">金</div>
+            <div class="weekday" style="color:#2196f3">土</div>
+        </div>
+        
+        <div class="calendar-grid" id="calendar-body">
+            </div>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <h3 style="margin-top:0;">シフト入力</h3>
+            <div class="form-group">
+                <label>時給 (円)</label>
+                <input type="number" id="input-rate" value="1100">
+            </div>
+            <div class="form-group">
+                <label>勤務時間 (時間)</label>
+                <input type="number" id="input-hours" step="0.5" placeholder="例: 5">
+            </div>
+            <div class="modal-btns">
+                <button class="btn-del" onclick="deleteShift()" id="btn-del" style="display:none;">削除</button>
+                <button onclick="closeModal()" style="background:#eee; border:none; padding:8px 16px; border-radius:4px; cursor:pointer;">キャンセル</button>
+                <button class="btn-save" onclick="saveShift()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === データ管理 ===
+        let currentDate = new Date();
+        let shifts = {}; // "2026-02-10": { rate: 1100, hours: 5 }
+        let selectedDateStr = "";
+
+        // 設定
+        const WALL_LIMIT = 1030000;
+
+        function init() {
+            loadData();
+            renderCalendar();
+            updateDashboard();
+        }
+
+        // --- カレンダー描画ロジック ---
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth(); // 0-11
+            
+            document.getElementById('calendar-title').innerText = `${year}年 ${month + 1}月`;
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            const startDayOfWeek = firstDay.getDay(); // 0(日) - 6(土)
+            const daysInMonth = lastDay.getDate();
+
+            const calendarBody = document.getElementById('calendar-body');
+            calendarBody.innerHTML = "";
+
+            // 空白セル（前月分）
+            for (let i = 0; i < startDayOfWeek; i++) {
+                const div = document.createElement('div');
+                div.className = 'day-cell';
+                div.style.background = "#f9f9f9";
+                calendarBody.appendChild(div);
+            }
+
+            // 日付セル
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${(month+1).toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
+                const div = document.createElement('div');
+                div.className = 'day-cell';
+                div.innerHTML = `<div class="day-number">${day}</div>`;
+                
+                // 本日チェック
+                const today = new Date();
+                if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+                    div.classList.add('today');
+                }
+
+                // シフト表示
+                if (shifts[dateStr]) {
+                    const s = shifts[dateStr];
+                    const salary = s.rate * s.hours;
+                    div.innerHTML += `
+                        <div class="shift-badge">
+                            ${s.hours}h<br>¥${salary.toLocaleString()}
+                        </div>
+                    `;
+                }
+
+                div.onclick = () => openModal(dateStr);
+                calendarBody.appendChild(div);
+            }
+        }
+
+        function changeMonth(diff) {
+            currentDate.setMonth(currentDate.getMonth() + diff);
+            renderCalendar();
+            updateDashboard(); // 月が変わったら「今月の給料」も変わるので更新
+        }
+
+        // --- 集計ロジック ---
+        function updateDashboard() {
+            let yearTotal = 0;
+            let monthTotal = 0;
+            
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1; // 1-12
+
+            // 全データ走査
+            for (const [dateStr, s] of Object.entries(shifts)) {
+                const [y, m, d] = dateStr.split('-').map(Number);
+                const salary = s.rate * s.hours;
+
+                // 年間累計
+                if (y === currentYear) {
+                    yearTotal += salary;
+                }
+                
+                // 月間累計（表示中の月）
+                if (y === currentYear && m === currentMonth) {
+                    monthTotal += salary;
+                }
+            }
+
+            // 表示更新
+            document.getElementById('month-salary').innerHTML = `${monthTotal.toLocaleString()}<span>円</span>`;
+            document.getElementById('year-salary').innerHTML = `${yearTotal.toLocaleString()}<span>円</span>`;
+
+            // 103万の壁メーター更新
+            const percent = Math.min((yearTotal / WALL_LIMIT) * 100, 100);
+            const bar = document.getElementById('wall-bar');
+            bar.style.width = `${percent}%`;
+
+            const alertMsg = document.getElementById('wall-alert');
+            if (percent >= 100) {
+                bar.style.background = "#F44336"; // 赤
+                alertMsg.innerText = "⚠️ 103万円を超えています！扶養控除に注意！";
+            } else if (percent >= 90) {
+                bar.style.background = "#FF9800"; // オレンジ
+                alertMsg.innerText = "⚠️ もうすぐ103万円の壁です！";
+            } else {
+                bar.style.background = "#4CAF50"; // 緑
+                alertMsg.innerText = `あと ${(WALL_LIMIT - yearTotal).toLocaleString()}円 稼げます`;
+            }
+        }
+
+        // --- モーダル操作 ---
+        const modal = document.getElementById('modal');
+
+        function openModal(dateStr) {
+            selectedDateStr = dateStr;
+            const s = shifts[dateStr];
+            
+            if (s) {
+                document.getElementById('input-rate').value = s.rate;
+                document.getElementById('input-hours').value = s.hours;
+                document.getElementById('btn-del').style.display = 'block';
+            } else {
+                // 前回入力した時給があればそれをデフォルトに（UX向上）
+                const lastRate = localStorage.getItem('lastRate') || 1100;
+                document.getElementById('input-rate').value = lastRate;
+                document.getElementById('input-hours').value = '';
+                document.getElementById('btn-del').style.display = 'none';
+            }
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function saveShift() {
+            const rate = Number(document.getElementById('input-rate').value);
+            const hours = Number(document.getElementById('input-hours').value);
+
+            if (rate > 0 && hours > 0) {
+                shifts[selectedDateStr] = { rate, hours };
+                // 次回のために時給を記憶
+                localStorage.setItem('lastRate', rate);
+                saveData();
+                renderCalendar();
+                updateDashboard();
+                closeModal();
+            } else {
+                alert("正しい数値を入力してください");
+            }
+        }
+
+        function deleteShift() {
+            if (confirm("シフトを削除しますか？")) {
+                delete shifts[selectedDateStr];
+                saveData();
+                renderCalendar();
+                updateDashboard();
+                closeModal();
+            }
+        }
+
+        // --- データ保存 ---
+        function saveData() {
+            localStorage.setItem('partTimeData', JSON.stringify(shifts));
+        }
+
+        function loadData() {
+            const data = localStorage.getItem('partTimeData');
+            if (data) {
+                shifts = JSON.parse(data);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
