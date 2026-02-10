@@ -10,6 +10,7 @@
             --danger: #F44336;
             --safe: #4CAF50;
             --bg: #f5f5f5;
+            --accent: #2196F3;
         }
         body {
             font-family: "Helvetica Neue", Arial, sans-serif;
@@ -22,7 +23,7 @@
             align-items: center;
         }
 
-        /* ダッシュボード（上部） */
+        /* ダッシュボード */
         .dashboard {
             background: white;
             width: 100%;
@@ -36,112 +37,56 @@
             justify-content: space-around;
             gap: 20px;
         }
-        .stat-card {
-            text-align: center;
-            flex: 1;
-            min-width: 120px;
-        }
+        .stat-card { text-align: center; flex: 1; min-width: 120px; }
         .stat-title { font-size: 12px; color: #777; margin-bottom: 5px; }
         .stat-value { font-size: 24px; font-weight: bold; color: #333; }
         .stat-value span { font-size: 14px; font-weight: normal; color: #777; }
 
-        /* 103万の壁メーター */
-        .wall-container {
-            width: 100%;
-            margin-top: 10px;
-        }
-        .wall-bar-bg {
-            height: 20px;
-            background: #eee;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-        .wall-bar-fill {
-            height: 100%;
-            background: var(--safe);
-            width: 0%;
-            transition: width 0.5s, background 0.3s;
-        }
-        .wall-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #777;
-            margin-top: 5px;
-        }
-        .alert-msg {
-            color: var(--danger);
-            font-weight: bold;
-            font-size: 12px;
-            text-align: center;
-            height: 18px;
-            margin-top: 5px;
-        }
+        /* 壁メーター */
+        .wall-container { width: 100%; margin-top: 10px; }
+        .wall-bar-bg { height: 20px; background: #eee; border-radius: 10px; overflow: hidden; position: relative; }
+        .wall-bar-fill { height: 100%; background: var(--safe); width: 0%; transition: width 0.5s, background 0.3s; }
+        .wall-label { display: flex; justify-content: space-between; font-size: 11px; color: #777; margin-top: 5px; }
+        .alert-msg { color: var(--danger); font-weight: bold; font-size: 12px; text-align: center; height: 18px; margin-top: 5px; }
 
-        /* カレンダーエリア */
+        /* カレンダー */
         .calendar-container {
-            background: white;
-            width: 100%;
-            max-width: 800px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
+            background: white; width: 100%; max-width: 800px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden;
         }
         .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: #fafafa;
-            border-bottom: 1px solid #eee;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; background: #fafafa; border-bottom: 1px solid #eee;
         }
         .calendar-header h2 { margin: 0; font-size: 18px; }
-        .btn-month {
-            border: none; background: white; border: 1px solid #ddd;
-            padding: 5px 15px; border-radius: 20px; cursor: pointer;
-        }
+        
+        .btn-month { border: 1px solid #ddd; background: white; padding: 5px 15px; border-radius: 20px; cursor: pointer; }
         .btn-month:hover { background: #eee; }
+        
+        /* ★新機能ボタン */
+        .btn-bulk {
+            background: var(--accent); color: white; border: none; padding: 6px 12px;
+            border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold;
+            margin-left: 10px;
+        }
+        .btn-bulk:hover { opacity: 0.9; }
 
-        /* カレンダーグリッド */
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-        }
-        .weekday {
-            text-align: center;
-            font-size: 12px;
-            font-weight: bold;
-            color: #777;
-            padding: 10px 0;
-            background: #fdfdfd;
-            border-bottom: 1px solid #eee;
-        }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+        .weekday { text-align: center; font-size: 12px; font-weight: bold; color: #777; padding: 10px 0; background: #fdfdfd; border-bottom: 1px solid #eee; }
         .day-cell {
-            min-height: 80px;
-            border-right: 1px solid #f0f0f0;
-            border-bottom: 1px solid #f0f0f0;
-            padding: 5px;
-            cursor: pointer;
-            position: relative;
-            transition: 0.1s;
+            min-height: 80px; border-right: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0;
+            padding: 5px; cursor: pointer; position: relative; transition: 0.1s;
         }
         .day-cell:hover { background: #fafafa; }
         .day-number { font-size: 12px; color: #444; }
         .today { background-color: #e3f2fd; }
         
-        /* シフトバッジ */
         .shift-badge {
-            margin-top: 5px;
-            background: #fff3e0;
-            border-left: 3px solid var(--primary);
-            color: #e65100;
-            font-size: 10px;
-            padding: 2px 4px;
-            border-radius: 2px;
+            margin-top: 5px; background: #fff3e0; border-left: 3px solid var(--primary);
+            color: #e65100; font-size: 10px; padding: 2px 4px; border-radius: 2px;
         }
 
-        /* モーダル */
+        /* モーダル共通 */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); display: none;
@@ -149,16 +94,30 @@
         }
         .modal {
             background: white; padding: 25px; border-radius: 12px;
-            width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
+        .modal h3 { margin-top: 0; margin-bottom: 15px; text-align: center;}
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #666; }
-        .form-group input {
-            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 16px;
-        }
+        .form-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #666; font-weight: bold; }
+        .form-group input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        
         .modal-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
         .btn-save { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
         .btn-del { background: var(--danger); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+        .btn-cancel { background: #eee; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+
+        /* 曜日選択チェックボックス */
+        .week-selector { display: flex; justify-content: space-between; gap: 2px; }
+        .week-option { flex: 1; text-align: center; }
+        .week-option input { display: none; } /* 本来のチェックボックスは隠す */
+        .week-option label {
+            display: block; padding: 8px 0; background: #f0f0f0; border-radius: 4px;
+            cursor: pointer; font-size: 12px; color: #555; transition: 0.2s;
+        }
+        /* チェックされた時のスタイル */
+        .week-option input:checked + label {
+            background: var(--accent); color: white; font-weight: bold;
+        }
 
     </style>
 </head>
@@ -188,9 +147,12 @@
 
     <div class="calendar-container">
         <div class="calendar-header">
-            <button class="btn-month" onclick="changeMonth(-1)">◀</button>
+            <div>
+                <button class="btn-month" onclick="changeMonth(-1)">◀</button>
+                <button class="btn-month" onclick="changeMonth(1)">▶</button>
+            </div>
             <h2 id="calendar-title">2026年 2月</h2>
-            <button class="btn-month" onclick="changeMonth(1)">▶</button>
+            <button class="btn-bulk" onclick="openBulkModal()">🔄 固定シフト</button>
         </div>
         
         <div class="calendar-grid">
@@ -203,13 +165,12 @@
             <div class="weekday" style="color:#2196f3">土</div>
         </div>
         
-        <div class="calendar-grid" id="calendar-body">
-            </div>
+        <div class="calendar-grid" id="calendar-body"></div>
     </div>
 
     <div class="modal-overlay" id="modal">
         <div class="modal">
-            <h3 style="margin-top:0;">シフト入力</h3>
+            <h3>シフト入力</h3>
             <div class="form-group">
                 <label>時給 (円)</label>
                 <input type="number" id="input-rate" value="1100">
@@ -220,8 +181,44 @@
             </div>
             <div class="modal-btns">
                 <button class="btn-del" onclick="deleteShift()" id="btn-del" style="display:none;">削除</button>
-                <button onclick="closeModal()" style="background:#eee; border:none; padding:8px 16px; border-radius:4px; cursor:pointer;">キャンセル</button>
+                <button class="btn-cancel" onclick="closeModal()">キャンセル</button>
                 <button class="btn-save" onclick="saveShift()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="bulk-modal">
+        <div class="modal">
+            <h3>🔄 固定シフト一括登録</h3>
+            <p style="font-size:12px; color:#666; text-align:center; margin-top:-10px;">
+                表示中の月 (<span id="bulk-target-month"></span>) にまとめて追加します
+            </p>
+
+            <div class="form-group">
+                <label>曜日を選択 (複数可)</label>
+                <div class="week-selector">
+                    <div class="week-option"><input type="checkbox" id="w0" value="0"><label for="w0">日</label></div>
+                    <div class="week-option"><input type="checkbox" id="w1" value="1"><label for="w1">月</label></div>
+                    <div class="week-option"><input type="checkbox" id="w2" value="2"><label for="w2">火</label></div>
+                    <div class="week-option"><input type="checkbox" id="w3" value="3"><label for="w3">水</label></div>
+                    <div class="week-option"><input type="checkbox" id="w4" value="4"><label for="w4">木</label></div>
+                    <div class="week-option"><input type="checkbox" id="w5" value="5"><label for="w5">金</label></div>
+                    <div class="week-option"><input type="checkbox" id="w6" value="6"><label for="w6">土</label></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>時給 (円)</label>
+                <input type="number" id="bulk-rate" value="1100">
+            </div>
+            <div class="form-group">
+                <label>勤務時間 (時間)</label>
+                <input type="number" id="bulk-hours" step="0.5" placeholder="例: 5">
+            </div>
+
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="closeBulkModal()">キャンセル</button>
+                <button class="btn-save" style="background:var(--accent);" onclick="saveBulkShift()">一括追加</button>
             </div>
         </div>
     </div>
@@ -229,10 +226,8 @@
     <script>
         // === データ管理 ===
         let currentDate = new Date();
-        let shifts = {}; // "2026-02-10": { rate: 1100, hours: 5 }
+        let shifts = {}; 
         let selectedDateStr = "";
-
-        // 設定
         const WALL_LIMIT = 1030000;
 
         function init() {
@@ -241,23 +236,21 @@
             updateDashboard();
         }
 
-        // --- カレンダー描画ロジック ---
+        // --- カレンダー描画 ---
         function renderCalendar() {
             const year = currentDate.getFullYear();
-            const month = currentDate.getMonth(); // 0-11
+            const month = currentDate.getMonth();
             
             document.getElementById('calendar-title').innerText = `${year}年 ${month + 1}月`;
             
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
-            
-            const startDayOfWeek = firstDay.getDay(); // 0(日) - 6(土)
+            const startDayOfWeek = firstDay.getDay();
             const daysInMonth = lastDay.getDate();
 
             const calendarBody = document.getElementById('calendar-body');
             calendarBody.innerHTML = "";
 
-            // 空白セル（前月分）
             for (let i = 0; i < startDayOfWeek; i++) {
                 const div = document.createElement('div');
                 div.className = 'day-cell';
@@ -265,28 +258,21 @@
                 calendarBody.appendChild(div);
             }
 
-            // 日付セル
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${(month+1).toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
                 const div = document.createElement('div');
                 div.className = 'day-cell';
                 div.innerHTML = `<div class="day-number">${day}</div>`;
                 
-                // 本日チェック
                 const today = new Date();
                 if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
                     div.classList.add('today');
                 }
 
-                // シフト表示
                 if (shifts[dateStr]) {
                     const s = shifts[dateStr];
                     const salary = s.rate * s.hours;
-                    div.innerHTML += `
-                        <div class="shift-badge">
-                            ${s.hours}h<br>¥${salary.toLocaleString()}
-                        </div>
-                    `;
+                    div.innerHTML += `<div class="shift-badge">${s.hours}h<br>¥${salary.toLocaleString()}</div>`;
                 }
 
                 div.onclick = () => openModal(dateStr);
@@ -297,68 +283,52 @@
         function changeMonth(diff) {
             currentDate.setMonth(currentDate.getMonth() + diff);
             renderCalendar();
-            updateDashboard(); // 月が変わったら「今月の給料」も変わるので更新
+            updateDashboard();
         }
 
-        // --- 集計ロジック ---
         function updateDashboard() {
             let yearTotal = 0;
             let monthTotal = 0;
-            
             const currentYear = currentDate.getFullYear();
-            const currentMonth = currentDate.getMonth() + 1; // 1-12
+            const currentMonth = currentDate.getMonth() + 1;
 
-            // 全データ走査
             for (const [dateStr, s] of Object.entries(shifts)) {
                 const [y, m, d] = dateStr.split('-').map(Number);
                 const salary = s.rate * s.hours;
-
-                // 年間累計
-                if (y === currentYear) {
-                    yearTotal += salary;
-                }
-                
-                // 月間累計（表示中の月）
-                if (y === currentYear && m === currentMonth) {
-                    monthTotal += salary;
-                }
+                if (y === currentYear) yearTotal += salary;
+                if (y === currentYear && m === currentMonth) monthTotal += salary;
             }
 
-            // 表示更新
             document.getElementById('month-salary').innerHTML = `${monthTotal.toLocaleString()}<span>円</span>`;
             document.getElementById('year-salary').innerHTML = `${yearTotal.toLocaleString()}<span>円</span>`;
 
-            // 103万の壁メーター更新
             const percent = Math.min((yearTotal / WALL_LIMIT) * 100, 100);
             const bar = document.getElementById('wall-bar');
             bar.style.width = `${percent}%`;
 
             const alertMsg = document.getElementById('wall-alert');
             if (percent >= 100) {
-                bar.style.background = "#F44336"; // 赤
+                bar.style.background = "#F44336";
                 alertMsg.innerText = "⚠️ 103万円を超えています！扶養控除に注意！";
             } else if (percent >= 90) {
-                bar.style.background = "#FF9800"; // オレンジ
+                bar.style.background = "#FF9800";
                 alertMsg.innerText = "⚠️ もうすぐ103万円の壁です！";
             } else {
-                bar.style.background = "#4CAF50"; // 緑
+                bar.style.background = "#4CAF50";
                 alertMsg.innerText = `あと ${(WALL_LIMIT - yearTotal).toLocaleString()}円 稼げます`;
             }
         }
 
-        // --- モーダル操作 ---
+        // --- 通常モーダル ---
         const modal = document.getElementById('modal');
-
         function openModal(dateStr) {
             selectedDateStr = dateStr;
             const s = shifts[dateStr];
-            
             if (s) {
                 document.getElementById('input-rate').value = s.rate;
                 document.getElementById('input-hours').value = s.hours;
                 document.getElementById('btn-del').style.display = 'block';
             } else {
-                // 前回入力した時給があればそれをデフォルトに（UX向上）
                 const lastRate = localStorage.getItem('lastRate') || 1100;
                 document.getElementById('input-rate').value = lastRate;
                 document.getElementById('input-hours').value = '';
@@ -366,48 +336,88 @@
             }
             modal.style.display = 'flex';
         }
-
-        function closeModal() {
-            modal.style.display = 'none';
-        }
-
+        function closeModal() { modal.style.display = 'none'; }
+        
         function saveShift() {
             const rate = Number(document.getElementById('input-rate').value);
             const hours = Number(document.getElementById('input-hours').value);
-
             if (rate > 0 && hours > 0) {
                 shifts[selectedDateStr] = { rate, hours };
-                // 次回のために時給を記憶
                 localStorage.setItem('lastRate', rate);
-                saveData();
-                renderCalendar();
-                updateDashboard();
-                closeModal();
+                saveData(); renderCalendar(); updateDashboard(); closeModal();
             } else {
-                alert("正しい数値を入力してください");
+                alert("数値を入力してください");
             }
         }
-
         function deleteShift() {
             if (confirm("シフトを削除しますか？")) {
                 delete shifts[selectedDateStr];
-                saveData();
-                renderCalendar();
-                updateDashboard();
-                closeModal();
+                saveData(); renderCalendar(); updateDashboard(); closeModal();
             }
+        }
+
+        // --- ★新機能：一括登録ロジック ---
+        const bulkModal = document.getElementById('bulk-modal');
+        
+        function openBulkModal() {
+            // 表示中の月をセット
+            const y = currentDate.getFullYear();
+            const m = currentDate.getMonth() + 1;
+            document.getElementById('bulk-target-month').innerText = `${y}年${m}月`;
+            
+            // 前回入力した時給をセット
+            const lastRate = localStorage.getItem('lastRate') || 1100;
+            document.getElementById('bulk-rate').value = lastRate;
+            
+            bulkModal.style.display = 'flex';
+        }
+        
+        function closeBulkModal() { bulkModal.style.display = 'none'; }
+        
+        function saveBulkShift() {
+            const rate = Number(document.getElementById('bulk-rate').value);
+            const hours = Number(document.getElementById('bulk-hours').value);
+            
+            // 選択された曜日を取得 (0〜6の配列)
+            const selectedDays = [];
+            for(let i=0; i<=6; i++) {
+                if(document.getElementById('w'+i).checked) selectedDays.push(i);
+            }
+
+            if(rate <= 0 || hours <= 0) return alert("時給と時間を入力してください");
+            if(selectedDays.length === 0) return alert("曜日を1つ以上選択してください");
+            
+            if(!confirm(`表示中の月（${currentDate.getMonth()+1}月）の指定した曜日に、シフトを一括登録しますか？\n（すでにあるデータは上書きされます）`)) return;
+
+            // 表示中の月の1日から末日までループ
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth(); // 0-based
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for(let d=1; d<=daysInMonth; d++) {
+                const dateObj = new Date(year, month, d);
+                const dayOfWeek = dateObj.getDay(); // 0(Sun) - 6(Sat)
+
+                // 選択した曜日に該当する場合のみ登録
+                if(selectedDays.includes(dayOfWeek)) {
+                    const dateStr = `${year}-${(month+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+                    shifts[dateStr] = { rate, hours };
+                }
+            }
+            
+            localStorage.setItem('lastRate', rate);
+            saveData();
+            renderCalendar();
+            updateDashboard();
+            closeBulkModal();
+            alert("登録完了！");
         }
 
         // --- データ保存 ---
-        function saveData() {
-            localStorage.setItem('partTimeData', JSON.stringify(shifts));
-        }
-
+        function saveData() { localStorage.setItem('partTimeData', JSON.stringify(shifts)); }
         function loadData() {
             const data = localStorage.getItem('partTimeData');
-            if (data) {
-                shifts = JSON.parse(data);
-            }
+            if (data) shifts = JSON.parse(data);
         }
 
         init();
